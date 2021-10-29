@@ -2,7 +2,7 @@ import shutil
 import os
 from os import listdir
 from os.path import isfile, join
-from location import dir_location, project_location
+from location import dir_location
 import time
 
 # The path of the directory which is to be organized
@@ -12,7 +12,21 @@ def classify(filename, foldername):
     f = os.listdir(location)
     if foldername[:-1] not in f:
         os.mkdir(location+foldername)
-
+    
+    # To check if the same named file already exists in the destination folder
+    i=0
+    while filename in os.listdir(location+foldername):
+        s = filename.split(".")
+        if i==0:
+            s[-2]+= str(i)
+        else:
+            s[-2] = s[-2][:-1]+ str(i)
+     
+        filename2 = ".".join(s)
+        os.rename(location+filename, location+filename2)
+        filename = filename2
+        i += 1
+    
     shutil.move(location+filename, location+foldername)
 
 
@@ -22,49 +36,55 @@ def organize_files(location):
         for file in files:
             extension = file.split(".")[-1]
 
-            if extension == "pdf":
-                classify(file, "pdf_files/")
+            if extension in ["tmp", "crdownload"]:
+                pass
+        
+            elif extension == "pdf":
+                classify(file, "PDF Files/")
 
             elif extension in ["pptx", "ppt", "pptm", "potx", "potm", "ppsx", "ppsm"]:
-                classify(file, "presentation_files/")
+                classify(file, "Presentations/")
 
             elif extension in ["docx", "dox", "doc"]:
-                classify(file, "word_files/")
+                classify(file, "Documents/")
 
             elif extension in ["jpg", "png", "jpeg", "raw", "psd", "gif"]:
-                classify(file, "images_and_gifs/")
+                classify(file, "Photos and GIF/")
 
             elif extension in ["c", "py", "java", "cpp"]:
-                classify(file, "developer_files/")
+                classify(file, "Programming/")
                 if extension == "c":
-                    classify("developer_files/"+file, "developer_files/C_files/")
+                    classify("Programming/"+file, "Programming/C_files/")
                 elif extension == "py":
-                    classify("developer_files/"+file, "developer_files/Python_files/")
+                    classify("Programming/"+file, "Programming/Python_files/")
                 elif extension == "java":
-                    classify("developer_files/"+file, "developer_files/Java_files/")
+                    classify("Programming/"+file, "Programming/Java_files/")
                 elif extension == "cpp":
-                    classify("developer_files/"+file, "developer_files/CPP_files/")
+                    classify("Programming/"+file, "Programming/CPP_files/")
 
             elif extension in ["mp4", "mpg", "mp2", "mpeg", "mpe", "mpv", "m4p", "m4v", "avi", "wmv", "mov", "qt", "flv", "swf"]:
-                classify(file, "videos_and_movies/")
+                classify(file, "Videos/")
 
             elif extension in ["mp3", "aac", "flac", "alac", "wav", "aiff", "dsd", "pcm", "mid"]:
-                classify(file, "audios_and_songs/")
+                classify(file, "Audios/")
 
             elif extension in ["xls", "xlr", "xlsx", "xlsb", "xml", "csv"]:
-                classify(file, "spreadsheet_files/")
+                classify(file, "Spreadsheets/")
 
             elif extension in ["txt"]:
-                classify(file, "text_files/")
+                classify(file, "Text Files/")
 
             elif extension in ["html", "css", "js", "php"]:
-                classify(file, "web_files/")
+                classify(file, "Web Files/")
 
             elif extension in ["gz", "rar", "7z", "rpm", "zip", "zipx"]:
-                classify(file, "compressed_files/")
+                classify(file, "Compressed Files/")
 
             elif extension in ["vcd", "iso", "mdf", "bin"]:
-                classify(file, "disk_image_files/")
+                classify(file, "Disk Image Files/")
+            
+            else:
+                classify(file, "Unknown Format Files/")
 
 
 if __name__ == "__main__":
@@ -74,4 +94,5 @@ if __name__ == "__main__":
             time.sleep(2)
 
     except Exception as e:
-        os.system(f'cmd /k "pythonw {project_location}main.py"') #The project_location is the location of the file main.py
+        # print("Error: " + str(e))
+        os.system(f'cmd /c "echo {e}"')
