@@ -7,7 +7,6 @@ from location import dir_location, project_location
 # The path of the directory which is to be organized
 location = dir_location
 
-
 def classify(filename, foldername):
     f = os.listdir(location)
     if foldername[:-1] not in f:
